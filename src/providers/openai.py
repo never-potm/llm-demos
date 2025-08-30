@@ -1,12 +1,10 @@
-from typing import Optional
-
-from config.config import OPENAI_API_KEY
+from config.config import OPENAI_API_KEY, OPENAAI_MODEL_NAME
 from openai import OpenAI
 
 
 class OpenAIProvider:
-    def __init__(self, model: str):
-        self.model = model
+    def __init__(self):
+        self.model = OPENAAI_MODEL_NAME
         key = OPENAI_API_KEY
         if not key:
             raise RuntimeError("OpenAI API key not set")

@@ -1,5 +1,4 @@
 import argparse
-import os
 
 from dotenv import load_dotenv
 
@@ -7,10 +6,7 @@ from providers.ollama import OllamaProvider
 from utils.website import Website
 from providers.openai import OpenAIProvider
 
-model = "gpt-5-nano"
-
-
-def generate_brochure_args(parser: argparse.ArgumentParser) -> None:
+def generate_summary_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--name", default="Google", help="Website name")
     parser.add_argument("--url", default="https://www.google.com", help="Website URL")
     parser.add_argument("--provider", default="ollama", help="Select Provider - openai, ollama")
@@ -30,13 +26,6 @@ def run(args: argparse.Namespace) -> None:
     print_summary(summary, save_to_file)
 
 
-def user_prompt_for(website):
-    user_prompt = f"You are looking at a website titled {website.title}"
-    user_prompt += "\nThe contents of this website is as follows; please provide a short summary of this website in markdown. If it includes news or announcements, then summarize these too."
-    user_prompt += website.text
-    return user_prompt
-
-
 def summarize(provider, url):
     website = Website(url)
     return provider.generate(messages_for(website))
@@ -49,6 +38,11 @@ def messages_for(website):
         {"role": "user", "content": user_prompt_for(website)}
     ]
 
+def user_prompt_for(website):
+    user_prompt = f"You are looking at a website titled {website.title}"
+    user_prompt += "\nThe contents of this website is as follows; please provide a short summary of this website in markdown. If it includes news or announcements, then summarize these too."
+    user_prompt += website.text
+    return user_prompt
 
 def print_summary(summary="", save_to_file=None):
     # Also save to file if path is given
@@ -58,12 +52,12 @@ def print_summary(summary="", save_to_file=None):
 
     print("Summary saved to", save_to_file)
 
-def get_provider(name: str):
-    if name == "openai":
-        provider = OpenAIProvider(model)
-    elif name == "ollama":
-        provider = OllamaProvider("llama3.2")
+def get_provider(model_name: str):
+    if model_name == "openai":
+        provider = OpenAIProvider()
+    elif model_name == "ollama":
+        provider = OllamaProvider()
     else:
-        raise ValueError(f"Unknown provider: {name}")
+        raise ValueError(f"Unknown provider: {model_name}")
 
     return provider

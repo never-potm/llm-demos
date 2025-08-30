@@ -1,11 +1,11 @@
 import requests
 
-from config.config import OLLAMA_API
+from config.config import OLLAMA_API, OLLAMA_MODEL
 
 
 class OllamaProvider:
-    def __init__(self, model: str):
-        self.model = model
+    def __init__(self):
+        self.model = OLLAMA_MODEL
 
     def generate(self, prompt: str) -> str:
         headers = {"Content-Type": "application/json"}
