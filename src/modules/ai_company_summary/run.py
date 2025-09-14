@@ -1,8 +1,10 @@
 import argparse
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 from providers.ollama import OllamaProvider
+from utils.file import create_file_with
 from utils.website import Website
 from providers.openai import OpenAIProvider
 
@@ -18,12 +20,12 @@ def run(args: argparse.Namespace) -> None:
     load_dotenv(override=True)
 
     website_name = args.name
-    save_to_file = f"outputs/{website_name.lower()}.md"
+    save_to_file = f"outputs/summaries/{website_name.lower()}.md"
 
     provider = get_provider(args.provider)
     summary = summarize(provider, args.url)
 
-    print_summary(summary, save_to_file)
+    create_file_with(summary, save_to_file)
 
 
 def summarize(provider, url):
@@ -44,13 +46,6 @@ def user_prompt_for(website):
     user_prompt += website.text
     return user_prompt
 
-def print_summary(summary="", save_to_file=None):
-    # Also save to file if path is given
-    if save_to_file:
-        with open(save_to_file, "w", encoding="utf-8") as f:
-            f.write(summary)
-
-    print("Summary saved to", save_to_file)
 
 def get_provider(model_name: str):
     if model_name == "openai":
